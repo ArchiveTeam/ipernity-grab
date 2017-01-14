@@ -42,7 +42,9 @@ allowed = function(url, parenturl)
   end
 
   if string.match(url, "%?lc=[01]")
-     or string.match(url, "/in/favorite/") then
+     or string.match(url, "/in/favorite/")
+     or string.match(url, "/in/keyword/")
+     or (string.match(url, "^https?://[^/]*ipernity%.com/feed/doc") and string.match(url, "keywords=")) then
     return false
   end
 
@@ -73,7 +75,9 @@ allowed = function(url, parenturl)
      and parenturl ~= nil
      and not (string.match(parenturl, "/favorite/")
       or string.match(parenturl, "/favorite$")
-      or string.match(url, "%.buddy%.jpg$")) then
+      or string.match(parenturl, "/favorites/by/")
+      or string.match(url, "%.buddy%.jpg$")
+      or string.match(url, "%.header%.[0-9]+%.jpg")) then
     return true
   end
 
@@ -85,11 +89,16 @@ wget.callbacks.download_child_p = function(urlpos, parent, depth, start_url_pars
   local html = urlpos["link_expect_html"]
 
   if username_escaped ~= nil
-     and (string.match(parent["url"], "/favorite/") or string.match(parent["url"], "/favorite$")) then
+     and (string.match(parent["url"], "/keywords?/")
+      or string.match(parent["url"], "/favorites?/")
+      or string.match(parent["url"], "/favorites?$")
+      or string.match(parent["url"], "/keywords?$"))
+     and not string.match(url, "@") then
     return false
   end
 
-  if string.match(url, "%.buddy%.jpg$") then
+  if string.match(url, "%.buddy%.jpg$")
+     or string.match(url, "%.header%.[0-9]+%.jpg") then
     return false
   end
 
