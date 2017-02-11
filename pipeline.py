@@ -62,7 +62,7 @@ if not WGET_LUA:
 #
 # Update this each time you make a non-cosmetic change.
 # It will be added to the WARC files and reported to the tracker.
-VERSION = "20170114.02"
+VERSION = "20170212.01"
 USER_AGENT = 'ArchiveTeam'
 TRACKER_ID = 'ipernity'
 TRACKER_HOST = 'tracker.archiveteam.org'
@@ -202,8 +202,8 @@ class WgetArgs(object):
             wget_args.extend(['--warc-header', 'ipernity-profile-id: {item_value}'.format(**locals())])
             url = 'http://www.ipernity.com/home/{item_value}'.format(**locals())
             response = requests.get(url)
-            assert response.status_code == 200
-            if response.url != url:
+            assert response.status_code in (200, 404, 410)
+            if response.url != url and response.status_code == 200:
                 wget_args.append(response.url)
 
             wget_args.append(url)
