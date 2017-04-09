@@ -216,12 +216,14 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
       end
     end
 
-    for start in string.gmatch(url, "^(.+[^a-zA-Z0-9%.%-_])" .. username_escaped .. "$") do
-      check(start .. item_value)
-    end 
-    for start, end_ in string.gmatch(url, "^(.+[^a-zA-Z0-9%.%-_])" .. username_escaped .. "([^a-zA-Z0-9%.%-_].+)") do
-      check(start .. item_value ..  end_)
-    end 
+    if username_escaped ~= nil then
+      for start in string.gmatch(url, "^(.+[^a-zA-Z0-9%.%-_])" .. username_escaped .. "$") do
+        check(start .. item_value)
+      end 
+      for start, end_ in string.gmatch(url, "^(.+[^a-zA-Z0-9%.%-_])" .. username_escaped .. "([^a-zA-Z0-9%.%-_].+)") do
+        check(start .. item_value ..  end_)
+      end
+    end
 
     for newurl in string.gmatch(html, '([^"]+)') do
       checknewurl(newurl)
