@@ -187,8 +187,10 @@ wget.callbacks.get_urls = function(file, url, is_css, iri)
 
     if username == nil and string.match(url, "^https?://[^/]*ipernity%.com/home/") then
       username = string.match(html, '"user_id"%s*:%s*' .. item_value .. '%s*,%s*"folder"%s*:%s*"([^"]+)"')
-      username_escaped = string.gsub(username, "([%%%^%$%(%)%.%[%]%*%+%-%?])", "%%%1")
-      allowed_strings[username] = true
+      if username ~= nil then
+        username_escaped = string.gsub(username, "([%%%^%$%(%)%.%[%]%*%+%-%?])", "%%%1")
+        allowed_strings[username] = true
+      end
     end
 
     if string.match(html, '"mediakey"%s*:%s*"[^"]+"') then
@@ -253,6 +255,9 @@ wget.callbacks.httploop_result = function(url, err, http_stat)
   end
 
   if status_code == 302 and username_id_urls[url["url"]] == true then
+    return wget.actions.EXIT
+  elseif string.match(url["url"], '^http://www.ipernity.com/home/[0-9]+$')
+     and (status_code == 404 or status_code == 403 or status_code == 410) then
     return wget.actions.EXIT
   end
 
